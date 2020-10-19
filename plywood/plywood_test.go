@@ -1,6 +1,7 @@
 package plywood
 
 import (
+	"fmt"
 	"io/ioutil"
 	"regexp"
 	"strings"
@@ -19,6 +20,10 @@ var log2 = `10-19-2020 19:19:17.497504 +1300 NZDT line 1a
 10-19-2020 19:19:18.497504 +1300 NZDT line 2a
 10-19-2020 19:19:19.497504 +1300 NZDT line 3a
 10-19-2020 19:19:20.497504 +1300 NZDT line 4a`
+
+var longLines = `10-19-2020 19:19:17.497504 +1300 NZDT line 1b
+line 2b
+line 3b`
 
 func TestBasic(t *testing.T) {
 	r1 := strings.NewReader(log1)
@@ -83,6 +88,29 @@ func TestTwoWithGoodFormat(t *testing.T) {
 2020-10-19 19:19:19.497504 +1300 NZDT [00:00:02:0][2] line 3a
 2020-10-19 19:19:20.497204 +1300 NZDT [00:00:03:0][1] line 4
 2020-10-19 19:19:20.497504 +1300 NZDT [00:00:03:0][2] line 4a
+`, string(ply))
+}
+
+func TestTwoWithGoodFormatBrokenLines(t *testing.T) {
+	r1 := strings.NewReader(log1)
+	r2 := strings.NewReader(longLines)
+	p := &Plywood{IncludeZeroBasis: true}
+	p.AddReader("1", r1)
+	p.AddReader("2", r2)
+	p.AddTimeFormat(`([\d-]* [\d:.]* [+-]?\d* .*?) `, "2006-01-02 15:04:05.999999999 -0700 MST")
+	p.AddTimeFormat(`([\d-]* [\d:.]* [+-]?\d* .*?) `, "01-02-2006 15:04:05.999999999 -0700 MST")
+
+	ply, err := ioutil.ReadAll(p)
+	require.NoError(t, err)
+	fmt.Println(string(ply))
+
+	require.Equal(t, `2020-10-19 19:19:17.497204 +1300 NZDT [00:00:00:0][1] line 1
+2020-10-19 19:19:17.497504 +1300 NZDT [00:00:00:0][2] line 1b
+2020-10-19 19:19:17.497504 +1300 NZDT [00:00:00:0][2] line 2b
+2020-10-19 19:19:17.497504 +1300 NZDT [00:00:00:0][2] line 3b
+2020-10-19 19:19:18.497204 +1300 NZDT [00:00:01:0][1] line 2
+2020-10-19 19:19:19.497204 +1300 NZDT [00:00:02:0][1] line 3
+2020-10-19 19:19:20.497204 +1300 NZDT [00:00:03:0][1] line 4
 `, string(ply))
 }
 

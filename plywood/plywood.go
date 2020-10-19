@@ -186,6 +186,7 @@ func (t *timedLineReader) scan() (bool, error) {
 
 		logTime, rest, err := t.extractor.Parse(t.scanner.Text())
 		if err != nil {
+			t.currentLine = " " + t.scanner.Text()
 			return true, err
 		}
 		t.currentTime = &logTime
