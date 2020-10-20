@@ -19,7 +19,7 @@ Future releases of Plywood will allow custom time formats.
 
 Flags:
  -a   Show absolute timestamp.  Defaults to false
- -r   Show relative timestamp.  Defaults to true
+ -r   Hide relative timestamp.  Defaults to false
 
 Usage:
 plywood one.log two.log > plywood.log
