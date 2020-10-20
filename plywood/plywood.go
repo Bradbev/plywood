@@ -10,8 +10,8 @@ import (
 )
 
 type Plywood struct {
-	IncludeZeroBasis    bool
-	ExcludeOriginalTime bool
+	IncludeRelativeTime bool
+	IncludeAbsoluteTime bool
 	readerNames         []string
 	lineReaders         []*timedLineReader
 	timeExtractors      []*timeExtractor
@@ -76,10 +76,10 @@ func (p *Plywood) formatLine(readerIndex int, when time.Time, line string) {
 	if when.IsZero() {
 		logLine = fmt.Sprintf("z [%v]%v\n", name, line)
 	} else {
-		if !p.ExcludeOriginalTime {
-			logLine = fmt.Sprintf("%v ", when)
+		if p.IncludeAbsoluteTime {
+			logLine = fmt.Sprintf("%v ", when.Format("2006-01-02 03:04:05.000"))
 		}
-		if p.IncludeZeroBasis {
+		if p.IncludeRelativeTime {
 			if p.firstLineTime.IsZero() {
 				p.firstLineTime = when
 			}
@@ -98,7 +98,7 @@ func formatDuration(d time.Duration) string {
 	min := (inMs / (60 * 1000)) % 60
 	hour := (inMs / (60 * 60 * 1000)) % 60
 
-	return fmt.Sprintf("%02d:%02d:%02d:%d", hour, min, sec, ms)
+	return fmt.Sprintf("%02d:%02d:%02d:%03d", hour, min, sec, ms)
 }
 
 // nextReader finds the earliest logtime from all the readers
@@ -129,7 +129,11 @@ func (t *timeExtractor) Parse(line string) (time.Time, string, error) {
 		if err != nil {
 			return time.Time{}, "", err
 		}
-		return now, line[len(match):], nil
+		if now.Year() == 0 {
+			now = now.AddDate(time.Now().Year(), 0, 0)
+		}
+
+		return now, line[len(matches[0]):], nil
 	}
 	return time.Time{}, "", fmt.Errorf("No match")
 }
