@@ -9,9 +9,9 @@
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${fileDirname}",
+      "program": "${workspaceRoot}/main.go",
       "env": {},
-      "args": []
+      "args": ["/home/bbeveridge/zsnaps/ew-7647/20201019_021527/syslog"]
     }
   ]
 }

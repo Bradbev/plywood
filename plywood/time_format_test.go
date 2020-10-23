@@ -78,3 +78,17 @@ func TestLogCat(t *testing.T) {
 	require.Equal(t, "2020-10-20 12:01:15.531 +0000 UTC", now.String())
 	require.Equal(t, " 2342  2767 line ", rest)
 }
+
+func TestSysLog(t *testing.T) {
+	ex := timeExtractor{
+		regex:  regexp.MustCompile(`(...... ..:..:..) `),
+		layout: "Jan 02 15:04:05",
+	}
+
+	line := `Oct 19 02:08:34 line `
+	now, rest, err := ex.Parse(line)
+	require.NoError(t, err)
+	require.Equal(t, "2020-10-19 02:08:34 +0000 UTC", now.String())
+	require.Equal(t, "line ", rest)
+
+}
