@@ -135,7 +135,7 @@ func (t *timeExtractor) Parse(line string) (time.Time, string, error) {
 
 		return now, line[len(matches[0]):], nil
 	}
-	return time.Time{}, "", fmt.Errorf("No match")
+	return time.Time{}, "", fmt.Errorf("No regex match for %v", line)
 }
 
 type timedLineReader struct {

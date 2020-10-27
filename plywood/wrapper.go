@@ -43,6 +43,12 @@ var defaultFormats = []CustomFormat{
 		ExampleLine:    `{10-20 12:01:15.531  2342  2767 line `,
 		ExpectedOutput: "2020-10-20 12:01:15.531 [test] 2342  2767 line \n",
 	},
+	{
+		Regex:          `^([-\d]* ..:..:..)`,
+		TimeFormat:     "2006-01-02 15:04:05",
+		ExampleLine:    `2020-10-27 00:55:59 - line`,
+		ExpectedOutput: "2020-10-27 12:55:59.000 [test] - line\n",
+	},
 }
 
 func DefaultPlywood() *Plywood {
