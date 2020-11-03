@@ -20,6 +20,12 @@ var defaultFormats = []CustomFormat{
 		ExpectedOutput: "2020-10-19 07:19:17.497 [test] line1 \n",
 	},
 	{
+		Regex:          `^([\d-]*T..:..:..\....)Z`,
+		TimeFormat:     "2006-01-02T15:04:05.999",
+		ExampleLine:    "2020-10-22T10:37:17.309Z line1",
+		ExpectedOutput: "2020-10-22 10:37:17.309 [test] line1\n",
+	},
+	{
 		Regex:          `^(..... ..:..:......) `,
 		TimeFormat:     "02Jan 15:04:05.999999999",
 		ExampleLine:    `18Oct 01:21:25.325 - line `,
